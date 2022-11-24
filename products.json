@@ -1,0 +1,80 @@
+[
+    {
+        "category_id":"1",
+        "name":"Honda CB150X",
+        "img":"https://i.ibb.co/sQcP1hq/Honda-CB150-X.jpg",
+        "description":"This bike has a 149.16 cc Engine which is a 4-Stroke, DOHC, 4-Valve, Single Cylinder PGM-FI Engine. Its maximum power is 16.7 Bhp @ 9000 RPM",
+        "location":"Dhaka",
+        "resaleValue":420000,
+        "originalPrice":520000,
+        "usedYears":1,
+        "condition":"Excellent",
+        "sellerName":"Biplob Ghosh",
+        "isVerified":false
+    },
+    {
+        "category_id":"1",
+        "name":"Honda X-Blade 160",
+        "img":"https://i.ibb.co/B3QPxdd/honda-x.jpg",
+        "description":"Igot mileage of about 50+ in the city and in highways *60/60+kmpl at 60-70kmph *50kmpl at 90kmph *35-40kmpl at 100-110kmph4. Very good in both on-road and offroad riding5.",
+        "location":"Khulna",
+        "resaleValue":170000,
+        "originalPrice":210000,
+        "usedYears":1,
+        "condition":"Excellent",
+        "sellerName":"Biplob Ghosh",
+        "isVerified":false
+    },
+    {
+        "category_id":"2",
+        "name":"Yamaha R15 V4",
+        "img":"https://i.ibb.co/mbh5cnp/r15.jpg",
+        "description":"Yamaha R15 V4 is powered by 155 cc engine.This R15 V4 engine generates a power of 18.4 PS @ 10000 rpm and a torque of 14.2 Nm @ 7500 rpm.Yamaha R15 V4 gets Disc brakes in the front and rear. The kerb weight of R15 V4 is 142 Kg.",
+        "location":"Dhaka",
+        "resaleValue":490000,
+        "originalPrice":550000,
+        "usedYears":1.5,
+        "condition":"Excellent",
+        "sellerName":"Biplob Ghosh",
+        "isVerified":false
+    },
+    {
+        "category_id":"2",
+        "name":"Yamaha FZS-FI V3",
+        "img":"https://i.ibb.co/0yjvXp0/Yamaha-FZS-FI.jpg",
+        "description":"Displacement, 149 cc ; Engine Type, Air cooled, 4-stroke, SOHC, 2-valve ; No. of Cylinders, 1 ; Max Power, 12.4 PS @ 7250 rpm ; Max Torque, 13.3 Nm @ 5500 rpm.",
+        "location":"Khulna",
+        "resaleValue":230000,
+        "originalPrice":257500,
+        "usedYears":1,
+        "condition":"Excellent",
+        "sellerName":"Biplob Ghosh",
+        "isVerified":false
+    },
+    {
+        "category_id":"3",
+        "name":"Royal Enfield Classic 350",
+        "img":"https://i.ibb.co/kBsfJX2/oyal-enfield-classic-350.jpg",
+        "description":"Royal Enfield Classic 350 Specifications ; Max Power, 20.21 PS @ 6100 rpm ; Max Torque, 27 Nm @ 4000 rpm ; Front Brake, Disc ; Rear Brake, Disc ; Fuel Capacity, 13",
+        "location":"Sylhet",
+        "resaleValue":400000,
+        "originalPrice":700000,
+        "usedYears":3,
+        "condition":"Excellent",
+        "sellerName":"Biplob Ghosh",
+        "isVerified":false
+    },
+    {
+        "category_id":"3",
+        "name":"Royal Enfield Himalayan",
+        "img":"https://i.ibb.co/qgCfsfr/Royal-Enfield-Himalayan.jpg",
+        "description":"Royal Enfield Himalayan is powered by 411 cc engine. This Himalayan engine generates a power of 24.31 PS @ 6500 rpm and a torque of 32 Nm @ 4000 - 4500 rpm.",
+        "location":"Sylhet",
+        "resaleValue":400000,
+        "originalPrice":600000,
+        "usedYears":2,
+        "condition":"Excellent",
+        "sellerName":"Biplob Ghosh",
+        "isVerified":false
+    }
+]
