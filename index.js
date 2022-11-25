@@ -19,6 +19,7 @@ async function run() {
         const categoriesCollection = client.db('motoVintage').collection('categories');
         const productsCollection = client.db('motoVintage').collection('products');
         const bookingsCollection = client.db('motoVintage').collection('bookings');
+        const usersCollection = client.db('motoVintage').collection('users');
         app.get('/categories', async (req, res) => {
             const query = {};
             const categories = await categoriesCollection.find(query).toArray();
@@ -40,13 +41,18 @@ async function run() {
             const booking = req.body;
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
-        })
+        });
 
         app.get('/bookings', async (req, res) => {
             const email = req.query.email;
             const query = { userEmail: email };
             const bookings = await bookingsCollection.find(query).toArray();
             res.send(bookings);
+        });
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
         })
 
     }
