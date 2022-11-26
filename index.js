@@ -110,7 +110,12 @@ async function run() {
             const user = await usersCollection.find(query).toArray();
             res.send(user);
         });
-
+        app.get('/allusers/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
 
 
         app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
