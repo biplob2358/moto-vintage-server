@@ -88,6 +88,13 @@ async function run() {
 
         app.post('/users', async (req, res) => {
             const user = req.body;
+            const query = {
+                email: user.email
+            }
+            const alreadyUser = await usersCollection.find(query).toArray();
+            if (alreadyUser.length) {
+                return res.send({ acknowledged: false })
+            }
             const result = await usersCollection.insertOne(user);
             res.send(result);
         })
@@ -97,6 +104,31 @@ async function run() {
             const user = await usersCollection.find(query).toArray();
             res.send(user);
         });
+        app.get('/allusers', async (req, res) => {
+            const role = req.query.role;
+            const query = { role: role };
+            const user = await usersCollection.find(query).toArray();
+            res.send(user);
+        });
+
+        app.put('/allusers/seller/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+
+                    isVerified: true
+
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+
+        })
+
+
+
 
     }
     finally {
