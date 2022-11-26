@@ -52,6 +52,14 @@ async function run() {
             const result = await productsCollection.insertOne(product);
             res.send(result);
         })
+        app.get('/product', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const product = await productsCollection.find(query).toArray();
+            res.send(product);
+        });
+
+
 
 
         app.get('/categories/:id', async (req, res) => {
@@ -159,6 +167,24 @@ async function run() {
             res.send(result);
 
         })
+
+        //wait
+
+        app.get('/allproducts', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+
+                    isVerified: true
+
+                }
+            }
+            const result = await productsCollection.updateMany(query, updatedDoc, options);
+            res.send(result);
+        });
+
 
 
 
