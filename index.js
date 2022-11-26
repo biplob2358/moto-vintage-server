@@ -111,7 +111,15 @@ async function run() {
             res.send(user);
         });
 
-        app.put('/allusers/seller/:id', async (req, res) => {
+
+
+        app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail }
+            const user = await usersCollection.findOne(query);
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'Forbidden Access' })
+            }
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true }
