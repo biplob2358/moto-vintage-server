@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_Key)
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
@@ -35,6 +38,40 @@ async function run() {
         const productsCollection = client.db('motoVintage').collection('products');
         const bookingsCollection = client.db('motoVintage').collection('bookings');
         const usersCollection = client.db('motoVintage').collection('users');
+        const paymentsCollection = client.db('motoVintage').collection('payments');
+
+
+        const verifyAdmin = async (req, res, next) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next();
+        }
+        const verifySeller = async (req, res, next) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+
+            if (user?.role !== 'seller') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next();
+        }
+        const verifyBuyer = async (req, res, next) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+
+            if (user?.role !== 'buyer') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next();
+        }
+
 
         app.get('/categories', async (req, res) => {
             const query = {};
@@ -59,9 +96,6 @@ async function run() {
             res.send(product);
         });
 
-
-
-
         app.get('/categories/:id', async (req, res) => {
             const id = req.params.id;
             const query = { category_id: id }
@@ -75,16 +109,53 @@ async function run() {
             res.send(result);
         });
 
-        app.get('/bookings', verifyJWT, async (req, res) => {
+        app.get('/bookings', verifyJWT, verifyBuyer, async (req, res) => {
             const email = req.query.email;
-            const decodedEmail = req.decoded.email;
-            if (email !== decodedEmail) {
-                return res.status(403).send({ message: 'Forbidden access' });
-            }
             const query = { userEmail: email };
             const bookings = await bookingsCollection.find(query).toArray();
             res.send(bookings);
         });
+
+        app.get('/bookings/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const booking = await bookingsCollection.findOne(query);
+            res.send(booking);
+        });
+
+        //payment
+        app.post('/create-payment-intent', async (req, res) => {
+            const booking = req.body;
+            const price = parseInt(booking.resaleValue);
+
+            const amount = price * 100;
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'usd',
+                amount: amount,
+                "payment_method_types": [
+                    "card"
+                ]
+            });
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        });
+
+        app.post('/payments', async (req, res) => {
+            const payment = req.body;
+            const result = await paymentsCollection.insertOne(payment);
+            const id = payment.bookingId
+            const filter = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+            const updatedResult = await bookingsCollection.updateOne(filter, updatedDoc)
+            res.send(result);
+        })
 
 
         app.get('/jwt', async (req, res) => {
@@ -142,17 +213,17 @@ async function run() {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
-            res.send({ isBuyer: user?.role !== 'seller' && user?.role !== 'admin' });
+            res.send({ isBuyer: user?.role === 'buyer' });
         })
 
 
-        app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
-            const decodedEmail = req.decoded.email;
-            const query = { email: decodedEmail }
-            const user = await usersCollection.findOne(query);
-            if (user?.role !== 'admin') {
-                return res.status(403).send({ message: 'Forbidden Access' })
-            }
+        app.put('/allusers/seller/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            // const decodedEmail = req.decoded.email;
+            // const query = { email: decodedEmail }
+            // const user = await usersCollection.findOne(query);
+            // if (user?.role !== 'admin') {
+            //     return res.status(403).send({ message: 'Forbidden Access' })
+            // }
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true }
@@ -184,6 +255,19 @@ async function run() {
             const result = await productsCollection.updateMany(query, updatedDoc, options);
             res.send(result);
         });
+
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(filter);
+            res.send(result);
+        })
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(filter);
+            res.send(result);
+        })
 
 
 
