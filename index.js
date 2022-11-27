@@ -103,12 +103,35 @@ async function run() {
             const updatedDoc = {
                 $set: {
 
-                    soldOut: true
+                    soldOut: true,
+                    advertise: false
 
                 }
             }
             const result = await productsCollection.updateOne(query, updatedDoc, options);
             res.send(result);
+        });
+        app.get('/advertisement/:id', async (req, res) => {
+            const date = new Date();
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+
+                    advertise: true,
+                    advDate: date
+
+
+                }
+            }
+            const result = await productsCollection.updateOne(query, updatedDoc, options);
+            res.send(result);
+        });
+        app.get('/allbikes', async (req, res) => {
+            const query = {}
+            const products = await productsCollection.find(query).sort({ advDate: -1 }).limit(1).toArray();
+            res.send(products)
         });
 
         app.get('/categories/:id', async (req, res) => {
@@ -118,13 +141,14 @@ async function run() {
             res.send(products)
         });
 
+
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
         });
 
-        app.get('/bookings', verifyJWT, verifyBuyer, async (req, res) => {
+        app.get('/bookings', async (req, res) => {
             const email = req.query.email;
             const query = { userEmail: email };
             const bookings = await bookingsCollection.find(query).toArray();
