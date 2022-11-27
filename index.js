@@ -96,6 +96,21 @@ async function run() {
             res.send(product);
         });
 
+        app.get('/productstatus/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+
+                    soldOut: true
+
+                }
+            }
+            const result = await productsCollection.updateOne(query, updatedDoc, options);
+            res.send(result);
+        });
+
         app.get('/categories/:id', async (req, res) => {
             const id = req.params.id;
             const query = { category_id: id }
