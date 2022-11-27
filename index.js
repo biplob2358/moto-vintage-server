@@ -128,6 +128,22 @@ async function run() {
             const result = await productsCollection.updateOne(query, updatedDoc, options);
             res.send(result);
         });
+        app.get('/report/:id', async (req, res) => {
+            const date = new Date();
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+
+                    report: true,
+
+
+                }
+            }
+            const result = await productsCollection.updateOne(query, updatedDoc, options);
+            res.send(result);
+        });
         app.get('/allbikes', async (req, res) => {
             const query = {}
             const products = await productsCollection.find(query).sort({ advDate: -1 }).limit(1).toArray();
@@ -257,12 +273,7 @@ async function run() {
 
 
         app.put('/allusers/seller/:id', verifyJWT, verifyAdmin, async (req, res) => {
-            // const decodedEmail = req.decoded.email;
-            // const query = { email: decodedEmail }
-            // const user = await usersCollection.findOne(query);
-            // if (user?.role !== 'admin') {
-            //     return res.status(403).send({ message: 'Forbidden Access' })
-            // }
+
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true }
@@ -304,6 +315,20 @@ async function run() {
         app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(filter);
+            res.send(result);
+        })
+
+        //reported
+        app.get('/report', async (req, res) => {
+            const query = { report: true }
+            const products = await productsCollection.find(query).toArray();
+            res.send(products)
+        });
+
+        app.delete('/report/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
             const result = await productsCollection.deleteOne(filter);
             res.send(result);
         })
