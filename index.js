@@ -160,6 +160,19 @@ async function run() {
 
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
+
+            const query = {
+                bikeId: booking.bikeId,
+                userEmail: booking.userEmail
+            }
+            const alreadyBooked = await bookingsCollection.find(query).toArray();
+
+            if (alreadyBooked.length) {
+                const message = `You already booked ${booking.bikeName}`
+                return res.send({ acknowledged: false, message })
+            }
+
+
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
         });
@@ -222,7 +235,7 @@ async function run() {
                 const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '10h' })
                 return res.send({ accessToken: token })
             }
-            console.log(user);
+
             res.status(403).send({ accessToken: 'Unauthorized' });
         })
 
